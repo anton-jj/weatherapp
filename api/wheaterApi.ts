@@ -1,6 +1,6 @@
 
 
-const API_KEY = "611037c86a992e8fa86891a533525e9b"
+const API_KEY = process.env.EXPO_PUBLIC_SECRET_KEY;
 
 export interface WheatherResult {
 	temp: number;
