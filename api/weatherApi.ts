@@ -1,8 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const API_KEY = process.env.EXPO_PUBLIC_SECRET_KEY;
 
-export interface WheatherResult {
+export interface weatherResult {
 	temp: number;
 	description: string;
 	icon: string;
@@ -16,9 +17,9 @@ const buildUrlByCoords = (lat: number, lon: number) =>
 	`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
 
 
-export const getWheater = async (
+export const getWeather = async (
 	opts: { city?: string, lat?: number, lon?: number },
-): Promise<WheatherResult> => {
+): Promise<weatherResult> => {
 	let url: string = ""
 	if (opts.city == null && (opts.lat != null && opts.lon != null)) {
 		url = buildUrlByCoords(opts.lat, opts.lon)
@@ -36,7 +37,7 @@ export const getWheater = async (
 	}
 
 	const json = await res.json()
-	const result: WheatherResult =  {
+	const result: weatherResult =  {
 		temp: json.main.temp,
 		description: json.weather[0].description,
 		icon: json.weather[0].icon,
@@ -46,3 +47,20 @@ export const getWheater = async (
 
 	return result
 }
+
+const addFavorite = async (cityName: string) => {
+	const data = await AsyncStorage.getItem("favorites");
+	if (data !== null) {
+		const favorites = JSON.parse(data)
+		if (!favorites.includes(cityName)) {
+		favorites.push(cityName)
+		await AsyncStorage.setItem("favorites", JSON.stringify(favorites))
+		}
+	}
+}
+
+const loadFavorites = async (): Promise<string[]> => {
+	return JSON.parse((await AsyncStorage.getItem("favorites") ?? "[]"))
+}
+
+
