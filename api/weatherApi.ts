@@ -23,21 +23,20 @@ export const getWeather = async (
 	let url: string = ""
 	if (opts.city == null && (opts.lat != null && opts.lon != null)) {
 		url = buildUrlByCoords(opts.lat, opts.lon)
-	} else if(opts.city != null && (opts.lat == null && opts.lon == null)) {
-			url = buildUrlByCity(opts.city)
-	}else {
+	} else if (opts.city != null && (opts.lat == null && opts.lon == null)) {
+		url = buildUrlByCity(opts.city)
+	} else {
 		throw new Error("Needs lat & lon or a city name");
 	}
 
 	const res = await fetch(url)
 
-	// console.log(res);
 	if (!res.ok) {
 		throw new Error(`Error from api: ${res.status}: ${res.statusText}`)
 	}
 
 	const json = await res.json()
-	const result: weatherResult =  {
+	const result: weatherResult = {
 		temp: json.main.temp,
 		description: json.weather[0].description,
 		icon: json.weather[0].icon,
@@ -48,18 +47,24 @@ export const getWeather = async (
 	return result
 }
 
-const addFavorite = async (cityName: string) => {
+export const addFavorite = async (cityName: string) => {
+	cityName = cityName.toLowerCase()
 	const data = await AsyncStorage.getItem("favorites");
+	let favorites: string[] = []
 	if (data !== null) {
-		const favorites = JSON.parse(data)
-		if (!favorites.includes(cityName)) {
+		favorites = JSON.parse(data);
+	}
+
+	console.log("no saved data found creating new...")
+	if (!favorites.includes(cityName)) {
 		favorites.push(cityName)
 		await AsyncStorage.setItem("favorites", JSON.stringify(favorites))
-		}
+	} else {
+		console.log("city already in favorites")
 	}
 }
 
-const loadFavorites = async (): Promise<string[]> => {
+export const loadFavorites = async (): Promise<string[]> => {
 	return JSON.parse((await AsyncStorage.getItem("favorites") ?? "[]"))
 }
 

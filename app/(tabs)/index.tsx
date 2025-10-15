@@ -1,22 +1,49 @@
 import { text } from 'node:stream/consumers';
-import { Text, View, StyleSheet } from 'react-native'
-import { getWheater, WheatherResult } from '@/api/wheaterApi';
+import { Text, View, StyleSheet, TextInput, Button } from 'react-native'
+import { addFavorite, getWeather, loadFavorites, weatherResult } from '@/api/weatherApi';
+import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 async function logRes() {
-	const weather: WheatherResult = await getWheater({city:"London"})
-	console.log(weather.cityName)
-	console.log(weather.icon)
-	console.log(weather.temp)
-	console.log(weather.description)
-	
+	const weather: weatherResult = await getWeather({city:"London"})
+	AsyncStorage.removeItem("favorites")
+	let fav =  await loadFavorites()
+	console.log(fav)
+	addFavorite("new york")
+	fav =  await loadFavorites()
+	console.log(fav)
+
 }
 export default function HomeScreen() {
-	logRes()
-  return (
-		<View style={styles.container}>
-				<Text style={styles.text}>Homescreen </Text>
-		</View>
-  );
+	const [city, setCity] = useState("")
+	const [weather, setWeather] = useState<weatherResult | null>(null)
+
+
+	const fetchWeather = async () => {
+			const data = await getWeather({city})
+			setWeather(data)
+	}
+
+
+	return (
+	<View style={styles.container}>
+		<TextInput
+			placeholder="choose a city"
+			value={city}
+			onChangeText={setCity}
+			onSubmitEditing={fetchWeather}
+			returnKeyType="search"
+		/> 	
+	<Button title="search" onPress={fetchWeather}/>
+
+	<View>
+		<Text style={styles.text}>{weather?.cityName}</Text>
+		<Text style={styles.text}>{weather?.temp}</Text>
+		<Text style={styles.text}>{weather?.description}</Text>
+		<Text style={styles.text}>{weather?.icon}</Text>
+	</View>
+	</View>
+	)
 }
 
 const styles = StyleSheet.create({
