@@ -1,5 +1,5 @@
 import { text } from 'node:stream/consumers';
-import { Text, View, StyleSheet, TextInput, Button } from 'react-native'
+import { Text, View, StyleSheet, TextInput, Button, Image } from 'react-native'
 import { addFavorite, getWeather, loadFavorites, weatherResult } from '@/api/weatherApi';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -40,7 +40,7 @@ export default function HomeScreen() {
 		<Text style={styles.text}>{weather?.cityName}</Text>
 		<Text style={styles.text}>{weather?.temp}</Text>
 		<Text style={styles.text}>{weather?.description}</Text>
-		<Text style={styles.text}>{weather?.icon}</Text>
+		<Image source={{ uri:`https://openweathermap.org/img/wn/${weather.icon}@4x.png` }} style={{width: 150, height: 150}} />
 	</View>
 	</View>
 	)
