@@ -1,29 +1,46 @@
-import {
-	addFavorite,
-	getWeather,
-	loadFavorites,
-	weatherResult,
-} from "@/api/weatherApi";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState } from "react";
+import { getWeather, weatherResult } from "@/api/weatherApi";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { loadSettings } from "@/utils/loadSettings";
+import React, { useEffect, useState } from "react";
 import { Button, Image, StyleSheet, Text, TextInput, View } from "react-native";
 
-async function logRes() {
-  const weather: weatherResult = await getWeather({ city: "London" });
-  AsyncStorage.removeItem("favorites");
-  let fav = await loadFavorites();
-  console.log(fav);
-  addFavorite("new york");
-  fav = await loadFavorites();
-  console.log(fav);
-}
 export default function HomeScreen() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState<weatherResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [isCelsius, setIsCelsius] = useState(true);
 
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const tintColor = useThemeColor({}, "tint");
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  useEffect(() => {}, [weather]);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+		console.log(isCelsius)
+      const isCelsius = await loadSettings();
+      setIsCelsius(isCelsius);
+    };
+    fetchSettings();
+  }, []);
+
+  const convertTemp = (kelvin: number) => {
+    if (isCelsius) {
+      return Math.round(kelvin - 273.15);
+    } else {
+      return Math.round(((kelvin - 273.15) * 9) / 5 + 32);
+    }
+  };
   const fetchWeather = async () => {
+    setLoading(true);
     const data = await getWeather({ city });
     setWeather(data);
+    setLoading(false);
   };
 
   return (
@@ -37,17 +54,19 @@ export default function HomeScreen() {
       />
       <Button title="search" onPress={fetchWeather} />
 
-      <View>
-        <Text style={styles.text}>{weather?.cityName}</Text>
-        <Text style={styles.text}>{weather?.temp}</Text>
-        <Text style={styles.text}>{weather?.description}</Text>
-        <Image
-          source={{
-            uri: `https://openweathermap.org/img/wn/${weather?.icon}@4x.png`,
-          }}
-          style={{ width: 150, height: 150 }}
-        />
-      </View>
+      {weather && (
+        <>
+          <Text style={styles.text}>{weather?.cityName}</Text>
+          <Text style={styles.text}>{weather?.description}</Text>
+          <Text style={styles.text}>{convertTemp(weather.temp)}</Text>
+          <Image
+            source={{
+              uri: `https://openweathermap.org/img/wn/${weather?.icon}@4x.png`,
+            }}
+            style={{ width: 150, height: 150 }}
+          />
+        </>
+      )}
     </View>
   );
 }

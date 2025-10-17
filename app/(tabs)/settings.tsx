@@ -1,4 +1,5 @@
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { loadSettings } from '@/utils/loadSettings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Switch, Text, View } from 'react-native';
@@ -12,20 +13,13 @@ export default function SettingsScreen() {
 	const tintColor = useThemeColor({}, "tint");
 
 	useEffect(() => {
-		loadSettings();
+		const fetchSettings = async () => {
+		const isCelsius = await loadSettings();
+		setIsCelsius(isCelsius);
+		};
+		fetchSettings();
 	}, []);
-
-	const loadSettings = async () => {
-		try {
-			const tempUnits = await AsyncStorage.getItem("tempunits");
-			if (!tempUnits) {
-				setIsCelsius(tempUnits === "celsius")
-			}
-		}catch (error) {
-			console.error("error loading settings", error);
-		}
-	}
-
+		
 	const toggleTemp = async (value: boolean) => {
 		setIsCelsius(value);
 		await AsyncStorage.setItem("tempunits", value ? "celsius" : "fahrenheit");
