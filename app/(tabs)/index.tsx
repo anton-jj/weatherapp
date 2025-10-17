@@ -1,4 +1,5 @@
 import { getWeather, weatherResult } from "@/api/weatherApi";
+import { useTemp } from "@/hooks/use-temperature";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { loadSettings } from "@/utils/loadSettings";
 import React, { useEffect, useState } from "react";
@@ -8,7 +9,7 @@ export default function HomeScreen() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState<weatherResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isCelsius, setIsCelsius] = useState(true);
+  	const { isCelsius } = useTemp()
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -20,14 +21,13 @@ export default function HomeScreen() {
 
   useEffect(() => {}, [weather]);
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-		console.log(isCelsius)
-      const isCelsius = await loadSettings();
-      setIsCelsius(isCelsius);
-    };
-    fetchSettings();
-  }, []);
+//   useEffect(() => {
+//     const fetchSettings = async () => {
+//       const isCelsius = await loadSettings();
+//       setIsCelsius(isCelsius);
+//     };
+//     fetchSettings();
+//   }, []);
 
   const convertTemp = (kelvin: number) => {
     if (isCelsius) {

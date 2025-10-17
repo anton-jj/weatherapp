@@ -1,12 +1,13 @@
+import { useTemp } from '@/hooks/use-temperature';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { loadSettings } from '@/utils/loadSettings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Switch, Text, View } from 'react-native';
 
 
 export default function SettingsScreen() {
-	const [isCelsius, setIsCelsius] = useState(true); 
+	const { isCelsius, setIsCelsius } = useTemp()
 
 	const backgroundColor = useThemeColor({}, "background")
 	const textColor = useThemeColor({}, "text");
