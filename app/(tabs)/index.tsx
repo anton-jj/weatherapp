@@ -62,7 +62,7 @@ export default function HomeScreen() {
         <ActivityIndicator size="large" color={tintColor} style={styles.loading}/>
       ) : weather ? (
         <View style={styles.weatherContainer}>
-          <View styles={styles.cityRow}>
+          <View style={styles.cityRow}>
             <Text style={[styles.cityName, {color: textColor}]}>
               {weather.cityName}
             </Text>
