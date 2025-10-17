@@ -44,15 +44,20 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor}]}>
+		<View style={styles.searchContainer}>
       <TextInput
-        placeholder="choose a city"
+	  style={[styles.input, {color: textColor}]}
+        placeholder="Search for a city"
+		placeholderTextColor={textColor}
         value={city}
         onChangeText={setCity}
         onSubmitEditing={fetchWeather}
         returnKeyType="search"
       />
       <Button title="search" onPress={fetchWeather} />
+
+		</View>
 
       {weather && (
         <>
@@ -79,4 +84,15 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   text: { color: "white" },
+  searchContainer: {
+	flexDirection: "row", 
+	gap: 10,
+	marginBottom: 30,
+  },
+  input: {
+	flex: 1,
+	padding: 15,
+	borderRadius: 8,
+	fontSize: 15,
+  }
 });
