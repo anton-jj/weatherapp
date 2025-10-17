@@ -81,13 +81,4 @@ const styles = StyleSheet.create({
 	unitText: {
 		fontSize: 16,
 	},
-	infoSection: {
-		marginTop: 30,
-		paddingHorizontal: 10,
-	},
-	infoText: {
-		fontSize: 14,
-		textAlign: 'center',
-		lineHeight: 20,
-	},
 });
