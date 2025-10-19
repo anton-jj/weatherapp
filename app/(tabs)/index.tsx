@@ -3,7 +3,20 @@ import { useTemp } from "@/hooks/use-temperature";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { loadSettings } from "@/utils/loadSettings";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Button, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import * as Location from "expo-location";
+import {
+  getCurrentLocation,
+  requestLocationPermission,
+} from "@/utils/userLocation";
 
 export default function HomeScreen() {
   const [city, setCity] = useState("");
@@ -16,7 +29,11 @@ export default function HomeScreen() {
   const tintColor = useThemeColor({}, "tint");
 
   useEffect(() => {
-    loadSettings();
+    const init = async () => {
+      await fetchWeahterByCoords();
+      await loadSettings();
+    };
+    init();
   }, []);
 
   useEffect(() => {}, [weather]);
@@ -29,7 +46,30 @@ export default function HomeScreen() {
     }
   };
 
-  const fetchWeather = async () => {
+  const fetchWeahterByCoords = async () => {
+    try {
+      setLoading(true);
+      const perm = await requestLocationPermission();
+      alert(perm);
+      if (!perm) {
+        console.log("failed to get persmission");
+        return;
+      }
+      const coords = await getCurrentLocation();
+      if (!coords) {
+        console.log("failed to get coords");
+        return;
+      }
+      const data = await getWeather({ lat: coords?.lat, lon: coords?.lon });
+      setWeather(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWeatherByCity = async () => {
     try {
       setLoading(true);
       const data = await getWeather({ city });
@@ -52,35 +92,42 @@ export default function HomeScreen() {
           placeholderTextColor={textColor}
           value={city}
           onChangeText={setCity}
-          onSubmitEditing={fetchWeather}
+          onSubmitEditing={fetchWeatherByCity}
           returnKeyType="search"
         />
-        <Button title="search" onPress={fetchWeather} />
+        <Button title="search" onPress={fetchWeatherByCity} />
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color={tintColor} style={styles.loading}/>
+        <ActivityIndicator
+          size="large"
+          color={tintColor}
+          style={styles.loading}
+        />
       ) : weather ? (
         <View style={styles.weatherContainer}>
           <View style={styles.cityRow}>
-            <Text style={[styles.cityName, {color: textColor}]}>
+            <Text style={[styles.cityName, { color: textColor }]}>
               {weather.cityName}
             </Text>
           </View>
           <Image
-          source={{uri: `https://openweathermap.org/img/wn/${weather.icon}@4x.png`}}
-						style={styles.weatherIcon}/>
-            <Text style={[styles.temp, {color:textColor}]}>
-              {convertTemp(weather.temp)} {isCelsius ? "C" : "f"}
-            </Text>
-            <Text style={[styles.desc, {color:textColor}]}>
-              {weather.description}
-            </Text>
+            source={{
+              uri: `https://openweathermap.org/img/wn/${weather.icon}@4x.png`,
+            }}
+            style={styles.weatherIcon}
+          />
+          <Text style={[styles.temp, { color: textColor }]}>
+            {convertTemp(weather.temp)} {isCelsius ? "C" : "f"}
+          </Text>
+          <Text style={[styles.desc, { color: textColor }]}>
+            {weather.description}
+          </Text>
         </View>
-      ): (
-       <Text style={[styles.emptyText, { color: textColor }]}>
-					Search for a city or use your location
-				</Text> 
+      ) : (
+        <Text style={[styles.emptyText, { color: textColor }]}>
+          Search for a city or use your location
+        </Text>
       )}
     </View>
   );
@@ -111,8 +158,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     marginBottom: 10,
-  }, 
-  cityName : {
+  },
+  cityName: {
     fontSize: 28,
     fontWeight: 600,
   },
@@ -126,12 +173,11 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   desc: {
-   fontSize: 14,
+    fontSize: 14,
   },
   emptyText: {
     textAlign: "center",
     fontSize: 14,
     marginTop: 20,
   },
-
 });
