@@ -1,3 +1,4 @@
+import { temp_key } from "@/constants";
 import { loadSettings } from "@/utils/loadSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -10,31 +11,34 @@ type TempContextPrompt = {
 const TempContext = createContext<TempContextPrompt | undefined>(undefined);
 
 export const TempProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
+  children,
 }) => {
-    const [isCelsius, setIsCelsius] = useState<boolean>(true);
+  const [isCelsius, setIsCelsius] = useState<boolean>(true);
 
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const stored = loadSettings()
-            }catch (error){
-                console.error(error)
-            }
-        };
-        load();
-    }, [])
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const stored = loadSettings();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    load();
+  }, []);
 
-useEffect(() => {
+  useEffect(() => {
     const save = async () => {
-        try {
-            await AsyncStorage.setItem("tempunits", isCelsius ? "celsius" : "fahrenheit" );
-        }catch (error) {
-            console.error(error)
-        }
+      try {
+        await AsyncStorage.setItem(
+          temp_key,
+          isCelsius ? "celsius" : "fahrenheit",
+        );
+      } catch (error) {
+        console.error(error);
+      }
     };
     save();
-}, [isCelsius])
+  }, [isCelsius]);
 
   return (
     <TempContext.Provider value={{ isCelsius, setIsCelsius }}>
@@ -43,9 +47,9 @@ useEffect(() => {
   );
 };
 export const useTemp = (): TempContextPrompt => {
-    const ctx = useContext(TempContext);
-    if (!ctx){
-        throw new Error("useTemp has to be inside the provider")
-    }
-    return ctx;
-}
+  const ctx = useContext(TempContext);
+  if (!ctx) {
+    throw new Error("useTemp has to be inside the provider");
+  }
+  return ctx;
+};
