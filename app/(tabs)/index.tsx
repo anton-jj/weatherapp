@@ -1,4 +1,4 @@
-import { getWeather, weatherResult } from "@/api/weatherApi";
+import { addFavorite, getWeather, weatherResult } from "@/api/weatherApi";
 import { useTemp } from "@/hooks/use-temperature";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { loadSettings } from "@/utils/loadSettings";
@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import * as Location from "expo-location";
@@ -17,6 +18,7 @@ import {
   getCurrentLocation,
   requestLocationPermission,
 } from "@/utils/userLocation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
   const [city, setCity] = useState("");
@@ -46,11 +48,15 @@ export default function HomeScreen() {
     }
   };
 
+  const toggleFavorite = async () => {
+    if (!weather) return;
+    addFavorite(weather.cityName);
+  };
+
   const fetchWeahterByCoords = async () => {
     try {
       setLoading(true);
       const perm = await requestLocationPermission();
-      alert(perm);
       if (!perm) {
         console.log("failed to get persmission");
         return;
@@ -110,6 +116,9 @@ export default function HomeScreen() {
             <Text style={[styles.cityName, { color: textColor }]}>
               {weather.cityName}
             </Text>
+            <TouchableOpacity onPress={toggleFavorite}>
+              <Text>{isFavorite ? "favorite" : "not"}</Text>
+            </TouchableOpacity>
           </View>
           <Image
             source={{
