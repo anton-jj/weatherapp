@@ -15,7 +15,7 @@ export default function FavoriteScreen() {
       <FlatList
         data={favorites}
         renderItem={({ item }) => (
-          <Text style={{ color: textColor }}>
+          <Text style={{ color: tintColor }}>
             {item.charAt(0).toUpperCase() + item.slice(1)}
           </Text>
         )}

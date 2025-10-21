@@ -19,6 +19,7 @@ import {
 } from "@/utils/userLocation";
 import { useFavorites } from "@/stores/useFavorites";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { WeatherCard } from "@/components/weatherCard";
 
 export default function HomeScreen() {
   const [city, setCity] = useState("");
@@ -117,34 +118,13 @@ export default function HomeScreen() {
           style={styles.loading}
         />
       ) : weather ? (
-        <View style={styles.weatherContainer}>
-          <View style={styles.cityRow}>
-            <Text style={[styles.cityName, { color: textColor }]}>
-              {weather.cityName}
-            </Text>
-            <TouchableOpacity onPress={toggleFavortie}>
-              <Text style={{ color: textColor }}>
-                {isFavorite(weather.cityName) ? (
-                  <IconSymbol name={"heart.fill"} color={"red"} />
-                ) : (
-                  <IconSymbol name={"heart.fill"} color={"grey"} />
-                )}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <Image
-            source={{
-              uri: `https://openweathermap.org/img/wn/${weather.icon}@4x.png`,
-            }}
-            style={styles.weatherIcon}
-          />
-          <Text style={[styles.temp, { color: textColor }]}>
-            {convertTemp(weather.temp)} {isCelsius ? "C" : "f"}
-          </Text>
-          <Text style={[styles.desc, { color: textColor }]}>
-            {weather.description}
-          </Text>
-        </View>
+        <WeatherCard
+          weather={weather}
+          temp={convertTemp(weather.temp)}
+          unit={isCelsius ? "celsius" : "fahrenheit"}
+          onFavoritePress={toggleFavortie}
+          isFavorite={isFavorite(weather.cityName)}
+        />
       ) : (
         <Text style={[styles.emptyText, { color: textColor }]}>
           Search for a city or use your location
