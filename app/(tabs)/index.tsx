@@ -13,12 +13,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import * as Location from "expo-location";
 import {
   getCurrentLocation,
   requestLocationPermission,
 } from "@/utils/userLocation";
 import { useFavorites } from "@/stores/useFavorites";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 export default function HomeScreen() {
   const [city, setCity] = useState("");
@@ -124,9 +124,11 @@ export default function HomeScreen() {
             </Text>
             <TouchableOpacity onPress={toggleFavortie}>
               <Text style={{ color: textColor }}>
-                {isFavorite(weather.cityName)
-                  ? "favorited"
-                  : "Add to favorites"}
+                {isFavorite(weather.cityName) ? (
+                  <IconSymbol name={"heart.fill"} color={"red"} />
+                ) : (
+                  <IconSymbol name={"heart.fill"} color={"grey"} />
+                )}
               </Text>
             </TouchableOpacity>
           </View>
@@ -198,5 +200,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     marginTop: 20,
+  },
+  loading: {
+    margin: 50,
   },
 });
