@@ -1,4 +1,4 @@
-import { addFavorite, getWeather, weatherResult } from "@/api/weatherApi";
+import { getWeather, weatherResult } from "@/api/weatherApi";
 import { useTemp } from "@/hooks/use-temperature";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { loadSettings } from "@/utils/loadSettings";
@@ -18,13 +18,15 @@ import {
   getCurrentLocation,
   requestLocationPermission,
 } from "@/utils/userLocation";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFavorites } from "@/stores/useFavorites";
 
 export default function HomeScreen() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState<weatherResult | null>(null);
   const [loading, setLoading] = useState(false);
   const { isCelsius } = useTemp();
+  const { loadFavorites, addFavorite, removeFavorite, isFavorite } =
+    useFavorites();
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -34,23 +36,27 @@ export default function HomeScreen() {
     const init = async () => {
       await fetchWeahterByCoords();
       await loadSettings();
+      await loadFavorites();
     };
     init();
   }, []);
 
-  useEffect(() => {}, [weather]);
+  // useEffect(() => {}, [weather]);
 
+  const toggleFavortie = async () => {
+    if (!weather) return;
+    if (isFavorite(weather.cityName)) {
+      await removeFavorite(weather.cityName);
+    } else {
+      await addFavorite(weather.cityName);
+    }
+  };
   const convertTemp = (kelvin: number) => {
     if (isCelsius) {
       return Math.round(kelvin - 273.15);
     } else {
       return Math.round(((kelvin - 273.15) * 9) / 5 + 32);
     }
-  };
-
-  const toggleFavorite = async () => {
-    if (!weather) return;
-    addFavorite(weather.cityName);
   };
 
   const fetchWeahterByCoords = async () => {
@@ -116,8 +122,12 @@ export default function HomeScreen() {
             <Text style={[styles.cityName, { color: textColor }]}>
               {weather.cityName}
             </Text>
-            <TouchableOpacity onPress={toggleFavorite}>
-              <Text>{isFavorite ? "favorite" : "not"}</Text>
+            <TouchableOpacity onPress={toggleFavortie}>
+              <Text style={{ color: textColor }}>
+                {isFavorite(weather.cityName)
+                  ? "favorited"
+                  : "Add to favorites"}
+              </Text>
             </TouchableOpacity>
           </View>
           <Image
