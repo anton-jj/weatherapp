@@ -2,16 +2,20 @@ import { useFavorites } from "@/stores/useFavorites";
 import { text } from "node:stream/consumers";
 import React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function FavoriteScreen() {
   const { favorites } = useFavorites();
-  console.log(favorites);
+  const background = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const tintColor = useThemeColor({}, "tint");
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: background }]}>
       <FlatList
         data={favorites}
         renderItem={({ item }) => (
-          <Text style={{ color: "white" }}>
+          <Text style={{ color: textColor }}>
             {item.charAt(0).toUpperCase() + item.slice(1)}
           </Text>
         )}
