@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-import { getWeather, weatherResult } from "@/api/weatherApi";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
 
@@ -40,7 +38,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
     gap: 20,
     borderRadius: 12,
     padding: 16,

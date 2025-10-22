@@ -4,19 +4,23 @@ import React, { useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { WeatherCardCompact } from "@/components/weatherCardCompact";
+import { useWeather } from "@/stores/weatherStore";
+import { router } from "expo-router";
 
 export default function FavoriteScreen() {
   const { favorites, removeFavorite } = useFavorites();
+  const { fetchWeatherByCity } = useWeather();
   const background = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
-  const tintColor = useThemeColor({}, "tint");
 
   const handleRemove = async (cityName: string) => {
     await removeFavorite(cityName);
   };
 
-  const handlePress = (cityName: string) => {
-    console.log(`${cityName} was pressed now??`);
+  const handlePress = async (cityName: string) => {
+    console.log(cityName);
+    await fetchWeatherByCity(cityName);
+    router.push("/");
   };
 
   return (
