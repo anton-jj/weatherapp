@@ -1,4 +1,3 @@
-import { getWeather, weatherResult } from "@/api/weatherApi";
 import { useTemp } from "@/hooks/use-temperature";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { loadSettings } from "@/utils/loadSettings";
@@ -6,25 +5,24 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Button,
-  Image,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
-import {
-  getCurrentLocation,
-  requestLocationPermission,
-} from "@/utils/userLocation";
 import { useFavorites } from "@/stores/useFavorites";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import { WeatherCard } from "@/components/weatherCard";
+import { useWeather } from "@/stores/weatherStore";
 
 export default function HomeScreen() {
   const [city, setCity] = useState("");
-  const [weather, setWeather] = useState<weatherResult | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    weather,
+    isLoading,
+    error,
+    fetchWeatherByCity,
+    fetchWeatherByCoords,
+  } = useWeather();
   const { isCelsius } = useTemp();
   const { loadFavorites, addFavorite, removeFavorite, isFavorite } =
     useFavorites();
@@ -35,7 +33,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const init = async () => {
-      await fetchWeahterByCoords();
+      await fetchWeatherByCoords();
       await loadSettings();
       await loadFavorites();
     };
@@ -60,40 +58,9 @@ export default function HomeScreen() {
     }
   };
 
-  const fetchWeahterByCoords = async () => {
-    try {
-      setLoading(true);
-      const perm = await requestLocationPermission();
-      if (!perm) {
-        console.log("failed to get persmission");
-        return;
-      }
-      const coords = await getCurrentLocation();
-      if (!coords) {
-        console.log("failed to get coords");
-        return;
-      }
-      const data = await getWeather({ lat: coords?.lat, lon: coords?.lon });
-      setWeather(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchWeatherByCity = async () => {
-    try {
-      setLoading(true);
-      const data = await getWeather({ city });
-      setWeather(data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      alert("could not find weather for that city");
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = async () => {
+    if (!city.trim()) return;
+    await fetchWeatherByCity(city);
   };
 
   return (
@@ -105,13 +72,13 @@ export default function HomeScreen() {
           placeholderTextColor={textColor}
           value={city}
           onChangeText={setCity}
-          onSubmitEditing={fetchWeatherByCity}
+          onSubmitEditing={handleSearch}
           returnKeyType="search"
         />
-        <Button title="search" onPress={fetchWeatherByCity} />
+        <Button title="search" onPress={handleSearch} />
       </View>
 
-      {loading ? (
+      {isLoading ? (
         <ActivityIndicator
           size="large"
           color={tintColor}
