@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { weatherResult } from "@/api/weatherApi";
 import { IconSymbol } from "./ui/icon-symbol.ios";
+import { weatherResult } from "@/api/weatherApi";
 
 interface WeatherCardProp {
   weather: weatherResult;
@@ -11,7 +11,6 @@ interface WeatherCardProp {
   onFavoritePress: () => void;
   isFavorite: boolean;
 }
-
 export function WeatherCard({
   weather,
   temp,
