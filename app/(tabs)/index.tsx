@@ -24,8 +24,6 @@ export default function HomeScreen() {
     fetchWeatherByCoords,
   } = useWeather();
   const { isCelsius } = useTemp();
-  const { loadFavorites, addFavorite, removeFavorite, isFavorite } =
-    useFavorites();
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -35,21 +33,10 @@ export default function HomeScreen() {
     const init = async () => {
       await fetchWeatherByCoords();
       await loadSettings();
-      await loadFavorites();
     };
     init();
   }, []);
 
-  // useEffect(() => {}, [weather]);
-
-  const toggleFavortie = async () => {
-    if (!weather) return;
-    if (isFavorite(weather.cityName)) {
-      await removeFavorite(weather.cityName);
-    } else {
-      await addFavorite(weather.cityName);
-    }
-  };
   const convertTemp = (kelvin: number) => {
     if (isCelsius) {
       return Math.round(kelvin - 273.15);
@@ -89,8 +76,6 @@ export default function HomeScreen() {
           weather={weather}
           temp={convertTemp(weather.temp)}
           unit={isCelsius ? "celsius" : "fahrenheit"}
-          onFavoritePress={toggleFavortie}
-          isFavorite={isFavorite(weather.cityName)}
         />
       ) : (
         <Text style={[styles.emptyText, { color: textColor }]}>
