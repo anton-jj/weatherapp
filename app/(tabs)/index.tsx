@@ -78,15 +78,18 @@ export default function HomeScreen() {
           unit={isCelsius ? "celsius" : "fahrenheit"}
         />
       ) : (
-        <Text style={[styles.emptyText, { color: textColor }]}>
-          Search for a city or use your location
-        </Text>
+        <View style={styles.emptyContainer}>
+          <Text style={[styles.emptyText, { color: textColor }]}>
+            Search for a city or use your location
+          </Text>
+          <TouchableOpacity
+            onPress={fetchWeatherByCoords}
+            style={styles.locationButton}
+          >
+            <IconSymbol name="location.app.fill" color="tintColor" />
+          </TouchableOpacity>
+        </View>
       )}
-      <View>
-        <TouchableOpacity onPress={fetchWeatherByCoords}>
-          <IconSymbol name="location.app.fill" color="tintColor" />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -133,10 +136,18 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 14,
   },
+  emptyContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   emptyText: {
-    textAlign: "center",
     fontSize: 14,
-    marginTop: 20,
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  locationButton: {
+    marginLeft: 10,
+    alignContent: "center",
   },
   loading: {
     margin: 50,
