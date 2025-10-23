@@ -2,6 +2,7 @@ import { useTemp } from "@/hooks/use-temperature";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { loadSettings } from "@/utils/loadSettings";
 import React, { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
 import {
   ActivityIndicator,
   Button,
@@ -10,9 +11,9 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useFavorites } from "@/stores/useFavorites";
 import { WeatherCard } from "@/components/weatherCard";
 import { useWeather } from "@/stores/weatherStore";
+import { IconSymbol } from "@/components/ui/icon-symbol.ios";
 
 export default function HomeScreen() {
   const [city, setCity] = useState("");
@@ -31,7 +32,6 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const init = async () => {
-      await fetchWeatherByCoords();
       await loadSettings();
     };
     init();
@@ -82,6 +82,11 @@ export default function HomeScreen() {
           Search for a city or use your location
         </Text>
       )}
+      <View>
+        <TouchableOpacity onPress={fetchWeatherByCoords}>
+          <IconSymbol name="location.app.fill" color="tintColor" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
