@@ -23,7 +23,11 @@ export const useWeather = create<WeatherStore>((set) => ({
     try {
       set({ isLoading: true, error: null });
       const data = await getWeather({ city });
-      set({ weather: data, isLoading: false, error: null });
+      set({
+        weather: data,
+        isLoading: false,
+        error: null,
+      });
     } catch (error) {
       set({ error: "could not find that city", isLoading: false });
       alert("could not find weather for that city");

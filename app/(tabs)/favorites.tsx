@@ -18,7 +18,6 @@ export default function FavoriteScreen() {
   };
 
   const handlePress = async (cityName: string) => {
-    console.log(cityName);
     await fetchWeatherByCity(cityName);
     router.push("/");
   };

@@ -1,5 +1,7 @@
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { IconSymbol } from "./ui/icon-symbol.ios";
+import { useWeather } from "@/stores/weatherStore";
 
 interface WeatherCardCompactProp {
   city: string;
@@ -13,7 +15,11 @@ export function WeatherCardCompact({
   onRemove,
 }: WeatherCardCompactProp) {
   const textColor = useThemeColor({}, "text");
+  const tintColor = useThemeColor({}, "tint");
   const cardBg = "rgba(32, 47, 48, 0.5)";
+  const { weather } = useWeather();
+
+  const isSelected: boolean = weather?.cityName === city;
 
   return (
     <View style={[styles.card, { backgroundColor: cardBg }]}>
@@ -23,11 +29,15 @@ export function WeatherCardCompact({
 
       <View style={styles.buttons}>
         <TouchableOpacity style={styles.selectButton} onPress={onSelect}>
-          <Text style={styles.selectText}>O</Text>
+          {isSelected ? (
+            <IconSymbol name="checkmark.circle" color={tintColor} />
+          ) : (
+            <IconSymbol name="circle" color={tintColor} />
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.removeButton} onPress={onRemove}>
-          <Text style={styles.removeText}>✕</Text>
+          <IconSymbol name="heart.slash" color="red" />
         </TouchableOpacity>
       </View>
     </View>
@@ -54,12 +64,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
   },
-  selectButton: {
-    backgroundColor: "rgba(100, 150, 255, 0.8)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
+  // selectButton: {
+  //   backgroundColor: "rgba(100, 150, 255, 0.8)",
+  //   paddingHorizontal: 8,
+  //   paddingVertical: 4,
+  //   borderRadius: 8,
+  // },
   selectText: {
     color: "white",
     fontWeight: "600",
@@ -68,8 +78,8 @@ const styles = StyleSheet.create({
   removeButton: {
     padding: 8,
   },
-  removeText: {
-    fontSize: 20,
-    color: "#ff6b6b",
-  },
+  //   removeText: {
+  //     fontSize: 20,
+  //     color: "#ff6b6b",
+  //   },
 });
