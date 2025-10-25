@@ -7,19 +7,18 @@ interface WeatherCardCompactProp {
   city: string;
   onSelect: () => void;
   onRemove: () => void;
+  isSelected: boolean;
 }
 
 export function WeatherCardCompact({
   city,
   onSelect,
   onRemove,
+  isSelected,
 }: WeatherCardCompactProp) {
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "tint");
   const cardBg = "rgba(32, 47, 48, 0.5)";
-  const { weather } = useWeather();
-
-  const isSelected: boolean = weather?.cityName === city;
 
   return (
     <View style={[styles.card, { backgroundColor: cardBg }]}>

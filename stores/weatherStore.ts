@@ -12,12 +12,14 @@ interface WeatherStore {
   fetchWeatherByCity: (city: string) => Promise<void>;
   fetchWeatherByCoords: () => Promise<void>;
   clearWeather: () => void;
+  currentLocation: string | null;
 }
 
 export const useWeather = create<WeatherStore>((set) => ({
   weather: null,
   isLoading: false,
   error: null,
+  currentLocation: null,
 
   fetchWeatherByCity: async (city: string) => {
     try {
@@ -27,6 +29,7 @@ export const useWeather = create<WeatherStore>((set) => ({
         weather: data,
         isLoading: false,
         error: null,
+        currentLocation: data.cityName,
       });
     } catch (error) {
       set({ error: "could not find that city", isLoading: false });
@@ -48,7 +51,7 @@ export const useWeather = create<WeatherStore>((set) => ({
         return;
       }
       const data = await getWeather({ lat: coords?.lat, lon: coords?.lon });
-      set({ weather: data, isLoading: false });
+      set({ weather: data, isLoading: false, currentLocation: data.cityName });
     } catch (error) {
       set({ error: "Failed to fetch weather", isLoading: false });
       console.error(error);

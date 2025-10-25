@@ -1,6 +1,4 @@
 import { useFavorites } from "@/stores/useFavorites";
-import { text } from "node:stream/consumers";
-import React, { useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { WeatherCardCompact } from "@/components/weatherCardCompact";
@@ -9,7 +7,7 @@ import { router } from "expo-router";
 
 export default function FavoriteScreen() {
   const { favorites, removeFavorite } = useFavorites();
-  const { fetchWeatherByCity } = useWeather();
+  const { fetchWeatherByCity, currentLocation } = useWeather();
   const background = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
 
@@ -32,6 +30,9 @@ export default function FavoriteScreen() {
             city={item}
             onSelect={() => handlePress(item)}
             onRemove={() => handleRemove(item)}
+            isSelected={
+              currentLocation?.toLocaleLowerCase() === item.toLocaleLowerCase()
+            }
           />
         )}
       />
