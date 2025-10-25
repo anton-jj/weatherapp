@@ -33,7 +33,6 @@ export const useWeather = create<WeatherStore>((set) => ({
       });
     } catch (error) {
       set({ error: "could not find that city", isLoading: false });
-      alert("could not find weather for that city");
     }
   },
 

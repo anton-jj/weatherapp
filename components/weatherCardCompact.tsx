@@ -1,7 +1,6 @@
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { IconSymbol } from "./ui/icon-symbol.ios";
-import { useWeather } from "@/stores/weatherStore";
 
 interface WeatherCardCompactProp {
   city: string;
@@ -63,12 +62,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
   },
-  // selectButton: {
-  //   backgroundColor: "rgba(100, 150, 255, 0.8)",
-  //   paddingHorizontal: 8,
-  //   paddingVertical: 4,
-  //   borderRadius: 8,
-  // },
   selectText: {
     color: "white",
     fontWeight: "600",
@@ -77,8 +70,4 @@ const styles = StyleSheet.create({
   removeButton: {
     padding: 8,
   },
-  //   removeText: {
-  //     fontSize: 20,
-  //     color: "#ff6b6b",
-  //   },
 });

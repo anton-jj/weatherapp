@@ -31,6 +31,7 @@ export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "tint");
+  const hasError = error != null;
 
   useEffect(() => {
     const init = async () => {
@@ -68,7 +69,20 @@ export default function HomeScreen() {
         <Button title="search" onPress={handleSearch} />
       </View>
 
-      {isLoading ? (
+      {hasError ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <Text style={{ color: textColor }}>
+            Controll spelling or try use location instead
+          </Text>
+          <TouchableOpacity
+            onPress={fetchWeatherByCoords}
+            style={styles.locationButton}
+          >
+            <IconSymbol name="location.app.fill" color="tintColor" />
+          </TouchableOpacity>
+        </View>
+      ) : isLoading ? (
         <ActivityIndicator
           size="large"
           color={tintColor}
@@ -154,5 +168,12 @@ const styles = StyleSheet.create({
   },
   loading: {
     margin: 50,
+  },
+  errorContainer: {
+    alignItems: "center",
+  },
+  errorText: {
+    fontWeight: 700,
+    color: "#ffa500",
   },
 });
