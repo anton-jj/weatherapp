@@ -14,8 +14,10 @@ import {
 import { WeatherCard } from "@/components/weatherCard";
 import { useWeather } from "@/stores/weatherStore";
 import { IconSymbol } from "@/components/ui/icon-symbol.ios";
+import { useFavorites } from "@/stores/useFavorites";
 
 export default function HomeScreen() {
+  const { loadFavorites } = useFavorites();
   const [city, setCity] = useState("");
   const {
     weather,
@@ -33,6 +35,7 @@ export default function HomeScreen() {
   useEffect(() => {
     const init = async () => {
       await loadSettings();
+      await loadFavorites();
     };
     init();
   }, []);
