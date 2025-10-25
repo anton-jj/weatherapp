@@ -10,7 +10,6 @@ export async function requestLocationPermission(): Promise<boolean> {
     const { status } = await Location.requestForegroundPermissionsAsync();
     return status === "granted";
   } catch (error) {
-    alert("error requesting location permission");
     return false;
   }
 }
@@ -24,7 +23,6 @@ export async function getCurrentLocation(): Promise<userCoords | null> {
     };
   } catch (error) {
     console.log(error);
-    alert("error getting current location");
     return null;
   }
 }
